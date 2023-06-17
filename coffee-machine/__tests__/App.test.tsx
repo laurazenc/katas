@@ -1,8 +1,9 @@
-import { render } from '@testing-library/react';
-import App from "../App.tsx";
+import { render } from "@testing-library/react";
 
-test('Renders main page correctly', () => {
-    render(<App />)
+import App from "../src/apps/App.tsx";
 
-        expect(true).toBeTruthy();
+test("Renders main page correctly", () => {
+	render(<App />);
+
+	expect(true).toBeTruthy();
 });
