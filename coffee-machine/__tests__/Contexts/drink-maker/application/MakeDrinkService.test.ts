@@ -4,9 +4,11 @@ import { DrinkFactory } from "../../../../src/Contexts/drink-maker/domain/DrinkF
 import { DrinkEnum } from "../../../../src/Contexts/drink-maker/domain/DrinkType.ts";
 import { Money } from "../../../../src/Contexts/drink-maker/domain/Money.ts";
 import { Order } from "../../../../src/Contexts/drink-maker/domain/Order.ts";
+import { StringPrinter } from "../../../../src/Contexts/drink-maker/infrastructure/StringPrinter.ts";
 
 const makeDrinkFactory = new DrinkFactory();
-const getOrderService = new GetOrderService(makeDrinkFactory);
+const stringPrinter = new StringPrinter();
+const getOrderService = new GetOrderService(makeDrinkFactory, stringPrinter);
 
 describe("MakeDrinkService", () => {
 	describe("The drink maker should receive the correct instructions for my coffee / tea / chocolate order", () => {
@@ -100,5 +102,29 @@ describe("MakeDrinkService", () => {
 				},
 			);
 		});
+	});
+
+	describe("I want to be able to buy a orange juice for 0,6 euro", () => {
+		it("should be allow to buy an orange juice", () => {
+			const payWith = new Money(0.6);
+			const order = new Order(DrinkEnum.ORANGE_JUICE, 0, payWith);
+
+			const result = getOrderService.execute(order);
+			expect(result).toEqual("O::");
+		});
+	});
+
+	describe("I want to be able to have my coffee, chocolate or tea extra hot", () => {
+		it.each([DrinkEnum.TEA, DrinkEnum.COFFEE, DrinkEnum.CHOCOLATE])(
+			"should allow to heat %s drink",
+			(type: DrinkEnum) => {
+				const payWith = new Money(0.6);
+				const order = new Order(type, 0, payWith, true);
+
+				const result = getOrderService.execute(order);
+
+				expect(result).toEqual(`${type}h::`);
+			},
+		);
 	});
 });

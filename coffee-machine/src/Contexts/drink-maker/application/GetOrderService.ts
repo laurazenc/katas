@@ -1,8 +1,9 @@
 import { DrinkFactory } from "../domain/DrinkFactory.ts";
 import { Order } from "../domain/Order.ts";
+import { Printer } from "../domain/Printer.ts";
 
 export class GetOrderService {
-	constructor(private readonly drinkFactory: DrinkFactory) {}
+	constructor(private readonly drinkFactory: DrinkFactory, private readonly printer: Printer) {}
 
 	execute(order: Order) {
 		try {
@@ -14,9 +15,13 @@ export class GetOrderService {
 				drink.addSugar(order.sugar);
 			}
 
-			return `${drink.getType()}:${drink.getSugar()}:${drink.getStick()}`;
+			if (order.extraHot) {
+				drink.heat();
+			}
+
+			return this.printer.print(`${drink.getType()}:${drink.getSugar()}:${drink.getStick()}`);
 		} catch (e) {
-			return `M:${(e as unknown as Error).message}`;
+			return this.printer.print(`M:${(e as unknown as Error).message}`);
 		}
 	}
 }

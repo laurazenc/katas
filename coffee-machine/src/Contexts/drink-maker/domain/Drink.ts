@@ -1,4 +1,4 @@
-import { DrinkEnum, DrinkType } from "./DrinkType.ts";
+import { DrinkEnum, DrinkType, DrinkTypeValue } from "./DrinkType.ts";
 import { Money } from "./Money.ts";
 
 export class NotEnoughMoneyError extends Error {
@@ -8,11 +8,19 @@ export class NotEnoughMoneyError extends Error {
 	}
 }
 
+export class DrinkCannotBeHeated extends Error {
+	constructor(type: DrinkType) {
+		super();
+		this.message = `You cannot heat a ${type}`;
+	}
+}
+
 export abstract class Drink {
 	type: DrinkType;
 	sugar = 0;
 	stick = 0;
 	cost = new Money(0);
+	hot = false;
 
 	public addSugar(sugar: number) {
 		this.sugar = sugar;
@@ -25,8 +33,8 @@ export abstract class Drink {
 		this.stick = 1;
 	}
 
-	public getType(): DrinkEnum {
-		return this.type.value;
+	public getType(): DrinkTypeValue {
+		return new DrinkType(`${this.type.value}${this.hot ? "h" : ""}` as DrinkTypeValue).value;
 	}
 
 	public getSugar(): string {
@@ -43,6 +51,8 @@ export abstract class Drink {
 			throw new NotEnoughMoneyError(missingAmount);
 		}
 	}
+
+	abstract heat(): void;
 }
 
 export class Tea extends Drink {
@@ -53,6 +63,10 @@ export class Tea extends Drink {
 		super();
 		this.type = new DrinkType(DrinkEnum.TEA);
 	}
+
+	public heat(): void {
+		this.hot = true;
+	}
 }
 export class Chocolate extends Drink {
 	type: DrinkType;
@@ -61,6 +75,10 @@ export class Chocolate extends Drink {
 		super();
 		this.type = new DrinkType(DrinkEnum.CHOCOLATE);
 	}
+
+	public heat(): void {
+		this.hot = true;
+	}
 }
 export class Coffee extends Drink {
 	type: DrinkType;
@@ -68,5 +86,22 @@ export class Coffee extends Drink {
 	constructor() {
 		super();
 		this.type = new DrinkType(DrinkEnum.COFFEE);
+	}
+
+	public heat(): void {
+		this.hot = true;
+	}
+}
+
+export class OrangeJuice extends Drink {
+	type: DrinkType;
+	cost = new Money(0.6);
+	constructor() {
+		super();
+		this.type = new DrinkType(DrinkEnum.ORANGE_JUICE);
+	}
+
+	public heat(): void {
+		throw new DrinkCannotBeHeated(this.type);
 	}
 }
