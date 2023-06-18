@@ -1,12 +1,18 @@
 import { DrinkEnum, DrinkType } from "./DrinkType.ts";
+import { Money } from "./Money.ts";
 
-export class Drink {
+export class NotEnoughMoneyError extends Error {
+	constructor(missingAmount: number) {
+		super();
+		this.message = `You are missing ${missingAmount} money`;
+	}
+}
+
+export abstract class Drink {
 	type: DrinkType;
 	sugar = 0;
 	stick = 0;
-	constructor(type: DrinkType) {
-		this.type = type;
-	}
+	cost = new Money(0);
 
 	public addSugar(sugar: number) {
 		this.sugar = sugar;
@@ -29,5 +35,38 @@ export class Drink {
 
 	public getStick(): string {
 		return this.stick > 0 ? "0" : "";
+	}
+
+	public validateCost(money: Money) {
+		if (this.cost.isGreaterThan(money)) {
+			const missingAmount = this.cost.getMissingAmount(money);
+			throw new NotEnoughMoneyError(missingAmount);
+		}
+	}
+}
+
+export class Tea extends Drink {
+	type: DrinkType;
+	cost = new Money(0.4);
+
+	constructor() {
+		super();
+		this.type = new DrinkType(DrinkEnum.TEA);
+	}
+}
+export class Chocolate extends Drink {
+	type: DrinkType;
+	cost = new Money(0.5);
+	constructor() {
+		super();
+		this.type = new DrinkType(DrinkEnum.CHOCOLATE);
+	}
+}
+export class Coffee extends Drink {
+	type: DrinkType;
+	cost = new Money(0.6);
+	constructor() {
+		super();
+		this.type = new DrinkType(DrinkEnum.COFFEE);
 	}
 }
