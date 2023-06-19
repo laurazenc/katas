@@ -2,5 +2,5 @@
 
 List of Katas 
 
-- [ ] [Coffee Machine](./coffee-machine)
+- [x] [Coffee Machine](./coffee-machine)
 
