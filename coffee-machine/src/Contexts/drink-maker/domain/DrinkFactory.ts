@@ -1,4 +1,4 @@
-import { Chocolate, Coffee, Drink, OrangeJuice, Tea } from "./Drink.ts";
+import { Chocolate, Coffee, Drink, Milk, OrangeJuice, Tea, Water } from "./Drink.ts";
 import { DrinkEnum, DrinkType } from "./DrinkType.ts";
 
 export class DrinkFactory {
@@ -12,8 +12,13 @@ export class DrinkFactory {
 				return new Chocolate();
 			case DrinkEnum.ORANGE_JUICE:
 				return new OrangeJuice();
+			case DrinkEnum.MILK:
+				return new Milk();
+			case DrinkEnum.WATER:
+				return new Water();
+
 			default:
-				throw new Error(`Unsupported drink type: ${type}`);
+				throw new Error(`Unsupported drink type: ${type.value}`);
 		}
 	}
 }

@@ -3,6 +3,8 @@ export enum DrinkEnum {
 	COFFEE = "C",
 	CHOCOLATE = "H",
 	ORANGE_JUICE = "O",
+	WATER = "W",
+	MILK = "M",
 }
 
 export type DrinkTypeValue = DrinkEnum | `${DrinkEnum}h`;

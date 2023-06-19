@@ -1,9 +1,16 @@
+import { BeverageQuantityChecker } from "../domain/BeverageQuantityChecker.ts";
 import { DrinkFactory } from "../domain/DrinkFactory.ts";
+import { InventoryManagerRepository } from "../domain/InventoryManagerRepository.ts";
 import { Order } from "../domain/Order.ts";
 import { Printer } from "../domain/Printer.ts";
 
 export class GetOrderService {
-	constructor(private readonly drinkFactory: DrinkFactory, private readonly printer: Printer) {}
+	constructor(
+		private readonly drinkFactory: DrinkFactory,
+		private readonly printer: Printer,
+		private readonly inventoryManager: InventoryManagerRepository,
+		private readonly beverageChecker: BeverageQuantityChecker,
+	) {}
 
 	execute(order: Order) {
 		try {
@@ -17,6 +24,11 @@ export class GetOrderService {
 
 			if (order.extraHot) {
 				drink.heat();
+			}
+
+			this.inventoryManager.registerSale(new Date(), drink);
+			if (this.beverageChecker.isEmpty(drink.type.value)) {
+				return this.printer.print(`M:There is a shortage on ${order.type.value}`);
 			}
 
 			return this.printer.print(`${drink.getType()}:${drink.getSugar()}:${drink.getStick()}`);

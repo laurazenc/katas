@@ -4,11 +4,22 @@ import { DrinkFactory } from "../../../../src/Contexts/drink-maker/domain/DrinkF
 import { DrinkEnum } from "../../../../src/Contexts/drink-maker/domain/DrinkType.ts";
 import { Money } from "../../../../src/Contexts/drink-maker/domain/Money.ts";
 import { Order } from "../../../../src/Contexts/drink-maker/domain/Order.ts";
-import { StringPrinter } from "../../../../src/Contexts/drink-maker/infrastructure/StringPrinter.ts";
+import { EmailNotifierService } from "../../../../src/Contexts/drink-maker/infrastructure/EmailNotifierService.ts";
+import { InMemoryInventoryManagerRepository } from "../../../../src/Contexts/drink-maker/infrastructure/InMemoryInventoryManagerRepository.ts";
+import { OrderPrinter } from "../../../../src/Contexts/drink-maker/infrastructure/OrderPrinter.ts";
+import { QuantityChecker } from "../../../../src/Contexts/drink-maker/infrastructure/QuantityChecker.ts";
 
 const makeDrinkFactory = new DrinkFactory();
-const stringPrinter = new StringPrinter();
-const getOrderService = new GetOrderService(makeDrinkFactory, stringPrinter);
+const orderPrinter = new OrderPrinter();
+const inventoryManger = new InMemoryInventoryManagerRepository();
+const emailNotifier = new EmailNotifierService();
+const beverageChecker = new QuantityChecker(emailNotifier);
+const getOrderService = new GetOrderService(
+	makeDrinkFactory,
+	orderPrinter,
+	inventoryManger,
+	beverageChecker,
+);
 
 describe("MakeDrinkService", () => {
 	describe("The drink maker should receive the correct instructions for my coffee / tea / chocolate order", () => {
@@ -126,5 +137,12 @@ describe("MakeDrinkService", () => {
 				expect(result).toEqual(`${type}h::`);
 			},
 		);
+	});
+	describe("When I order a drink and it can be delivered because of a shortage, I want to see a message to the coffee machine console that indicates me the shortage and that a notification has been sent", () => {
+		it("should notify to get refilled", () => {
+			const order = new Order(DrinkEnum.MILK, 0, new Money(0));
+			const result = getOrderService.execute(order);
+			expect(result).toEqual("M:There is a shortage on M");
+		});
 	});
 });

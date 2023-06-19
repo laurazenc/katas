@@ -1,3 +1,3 @@
 export interface Printer {
-	print(message: string): any;
+	print(message: string): string;
 }

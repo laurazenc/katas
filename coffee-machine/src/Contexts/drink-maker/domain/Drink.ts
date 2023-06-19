@@ -105,3 +105,29 @@ export class OrangeJuice extends Drink {
 		throw new DrinkCannotBeHeated(this.type);
 	}
 }
+
+export class Water extends Drink {
+	type: DrinkType;
+	cost = new Money(0);
+	constructor() {
+		super();
+		this.type = new DrinkType(DrinkEnum.WATER);
+	}
+
+	public heat(): void {
+		throw new DrinkCannotBeHeated(this.type);
+	}
+}
+
+export class Milk extends Drink {
+	type: DrinkType;
+	cost = new Money(0);
+	constructor() {
+		super();
+		this.type = new DrinkType(DrinkEnum.MILK);
+	}
+
+	public heat(): void {
+		throw new DrinkCannotBeHeated(this.type);
+	}
+}
