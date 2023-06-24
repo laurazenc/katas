@@ -17,8 +17,8 @@ describe("Gilded Rose", () => {
 			"Aged Brie",
 			"Backstage passes to a TAFKAL80ETC concert",
 		];
-		const qualities = [0, 1, 2];
-		const sellIns = [-1, 0, 1];
+		const qualities = [0, 1, 2, 50];
+		const sellIns = [-1, 0, 1, 11, 6];
 		verifyAllCombinations3(calculateQuality, names, qualities, sellIns);
 	});
 });
