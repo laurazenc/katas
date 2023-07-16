@@ -7,7 +7,7 @@
       "DOM",
       "DOM.Iterable"
     ],
-    "module": "CommonJS",
+    "module": "ESNext",
     "skipLibCheck": true,
     /* Bundler mode */
     "moduleResolution": "bundler",
@@ -17,7 +17,6 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
     "baseUrl": ".",
     /* Linting */
     "strict": true,

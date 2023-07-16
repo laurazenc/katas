@@ -1,26 +1,42 @@
-import { Then, When } from "@cucumber/cucumber";
-import assert from "assert";
+import { defineFeature, loadFeature } from "jest-cucumber";
 
 import Account from "../../../../src/Contexts/account/application/Account.ts";
+import InMemoryTransactionRepository from "../../../../src/Contexts/account/infrastructure/InMemoryTransactionRepository.ts";
 
-const account = new Account();
+const feature = loadFeature("__tests__/features/account/account.feature");
 
-When("A client makes a deposit of {int} on {string}", function (amount) {
-	account.deposit(amount);
-});
+const transactionRepository = new InMemoryTransactionRepository();
+const account = new Account(transactionRepository);
 
-When("A deposit of {int} on {string}", function (amount) {
-	account.deposit(amount);
-});
+jest.useFakeTimers();
 
-When("A withdrawal of {int} on {string}", function (amount) {
-	account.withdraw(amount);
-});
+jest.setSystemTime(new Date("04 Dec 1995 00:12:00 GMT").getTime());
 
-When("they print their bank statement", function () {
-	account.printStatement();
-});
+defineFeature(feature, (test) => {
+	test("A client with Deposit and Withdrawal", ({ when, then }) => {
+		when(/^A client makes a deposit of (\d+) on "(.*)"$/, function (amount, date) {
+			jest.setSystemTime(new Date(date).getTime());
+			account.deposit(amount);
+		});
 
-Then("they would see:", function (expectedResponse) {
-	assert.equal(this.whatIHeard, expectedResponse);
+		when(/^A deposit of (\d+) on "(.*)"$/, function (amount, date) {
+			jest.setSystemTime(new Date(date).getTime());
+
+			account.deposit(amount);
+		});
+
+		when(/^A withdrawal of (\d+) on "(.*)"$/, function (amount, date) {
+			jest.setSystemTime(new Date(date).getTime());
+
+			account.withdraw(amount);
+		});
+
+		when(/^they print their bank statement/, function () {
+			account.printStatement();
+		});
+
+		then("they would see:", function (expectedResponse) {
+			expect(expectedResponse).toEqual("");
+		});
+	});
 });
