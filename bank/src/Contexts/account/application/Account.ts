@@ -1,11 +1,20 @@
 import AccountService from "../domain/AccountService.ts";
+import { TransactionRepository } from "../domain/TransactionRepository.ts";
 
 class Account implements AccountService {
-	deposit(amount: number): void {}
+	constructor(private readonly transactionRepository: TransactionRepository) {}
 
-	printStatement(): void {}
+	deposit(amount: number): void {
+		this.transactionRepository.makeDeposit(amount);
+	}
 
-	withdraw(amount: number): void {}
+	printStatement(): void {
+		this.transactionRepository.getTransactions();
+	}
+
+	withdraw(amount: number): void {
+		this.transactionRepository.makeWithdrawal(amount);
+	}
 }
 
 export default Account;
